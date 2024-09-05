@@ -371,14 +371,14 @@ class EnrichedEvent(UnrefreshableModel):
     def _get_detailed_results(self):
         """Actual search details implementation"""
         args = {"event_ids": [self.event_id]}
-        url = "/api/investigate/v2/orgs/{}/enriched_events/detail_jobs".format(self._cb.credentials.org_key)
+        url = "/api/investigate/v2/orgs/{}/observations/detail_jobs".format(self._cb.credentials.org_key)
         query_start = self._cb.post_object(url, body=args)
         job_id = query_start.json().get("job_id")
         timed_out = False
         submit_time = time.time() * 1000
 
         while True:
-            status_url = "/api/investigate/v2/orgs/{}/enriched_events/detail_jobs/{}/results".format(
+            status_url = "/api/investigate/v2/orgs/{}/observations/detail_jobs/{}/results".format(
                 self._cb.credentials.org_key,
                 job_id,
             )
@@ -404,7 +404,7 @@ class EnrichedEvent(UnrefreshableModel):
         log.debug("Pulling detailed results, timed_out={}".format(timed_out))
 
         still_fetching = True
-        result_url = "/api/investigate/v2/orgs/{}/enriched_events/detail_jobs/{}/results".format(
+        result_url = "/api/investigate/v2/orgs/{}/observations/detail_jobs/{}/results".format(
             self._cb.credentials.org_key,
             job_id
         )
@@ -460,8 +460,8 @@ class EnrichedEventFacet(UnrefreshableModel):
     """Represents an enriched event retrieved by one of the Enterprise EDR endpoints."""
     primary_key = "job_id"
     swagger_meta_file = "endpoint_standard/models/enriched_event_facet.yaml"
-    submit_url = "/api/investigate/v2/orgs/{}/enriched_events/facet_jobs"
-    result_url = "/api/investigate/v2/orgs/{}/enriched_events/facet_jobs/{}/results"
+    submit_url = "/api/investigate/v2/orgs/{}/observations/facet_jobs"
+    result_url = "/api/investigate/v2/orgs/{}/observations/facet_jobs/{}/results"
 
     class Terms(UnrefreshableModel):
         """Represents the facet fields and values associated with an Enriched Event Facet query."""
@@ -763,7 +763,7 @@ class EnrichedEventQuery(BaseEventQuery):
             url = "/api/investigate/v1/orgs/{}/enriched_events/aggregation_jobs/{}"
             url = url.format(self._cb.credentials.org_key, self._aggregation_field)
         else:
-            url = "/api/investigate/v2/orgs/{}/enriched_events/search_jobs".format(self._cb.credentials.org_key)
+            url = "/api/investigate/v2/orgs/{}/observations/search_jobs".format(self._cb.credentials.org_key)
         query_start = self._cb.post_object(url, body=args)
         self._query_token = query_start.json().get("job_id")
         self._timed_out = False
@@ -776,7 +776,7 @@ class EnrichedEventQuery(BaseEventQuery):
         if self._aggregation:
             return False
 
-        status_url = "/api/investigate/v2/orgs/{}/enriched_events/search_jobs/{}/results?start=0&rows=0".format(
+        status_url = "/api/investigate/v2/orgs/{}/observations/search_jobs/{}/results?start=0&rows=0".format(
             self._cb.credentials.org_key,
             self._query_token,
         )
@@ -810,7 +810,7 @@ class EnrichedEventQuery(BaseEventQuery):
                 self._query_token,
             )
         else:
-            result_url = "/api/investigate/v2/orgs/{}/enriched_events/search_jobs/{}/results".format(
+            result_url = "/api/investigate/v2/orgs/{}/observations/search_jobs/{}/results".format(
                 self._cb.credentials.org_key,
                 self._query_token,
             )
@@ -836,7 +836,7 @@ class EnrichedEventQuery(BaseEventQuery):
         current = start
         rows_fetched = 0
         still_fetching = True
-        result_url_template = "/api/investigate/v2/orgs/{}/enriched_events/search_jobs/{}/results".format(
+        result_url_template = "/api/investigate/v2/orgs/{}/observations/search_jobs/{}/results".format(
             self._cb.credentials.org_key,
             self._query_token
         )
