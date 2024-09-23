@@ -544,6 +544,7 @@ class BaseAPI(object):
         raw_data = None
 
         if method in ("POST", "PUT", "PATCH"):
+            headers["X-Gateway-Routing"] = "gke"
             if "Content-Type" not in headers:
                 headers["Content-Type"] = "application/json"
                 raw_data = kwargs.pop("data", {})
